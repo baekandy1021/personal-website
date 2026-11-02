@@ -1,0 +1,7 @@
+---
+// A slightly uneven hand-drawn rule.
+const { class: cls } = Astro.props;
+---
+<svg viewBox="0 0 400 8" preserveAspectRatio="none" class:list={['divider', cls]} aria-hidden="true">
+  <path d="M1 4.5C80 2.5 150 6 230 4s120-1 168 1" vector-effect="non-scaling-stroke" />
+</svg>

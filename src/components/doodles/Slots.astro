@@ -1,0 +1,15 @@
+---
+// A multi-armed bandit, i.e. a slot machine.
+const { class: cls, draw = true } = Astro.props;
+---
+<svg viewBox="0 0 90 90" class:list={['doodle', { draw }, cls]} aria-hidden="true">
+  <path class="f" d="M8 50c-2-16 14-26 32-24s30 12 26 28c-4 16-56 14-58-4z" />
+  <g filter="url(#wobble)">
+    <path d="M14 26h52c3 0 4 1 4 4v52H10V30c0-3 1-4 4-4z" />
+    <path d="M20 26c2-10 38-10 40 0" />
+    <path d="M18 40h12v16H18zM34 40h12v16H34zM50 40h12v16H50z" />
+    <path d="M10 68h60" />
+    <path d="M70 52h8V22" />
+    <circle class="a" cx="78" cy="17" r="4.5" />
+  </g>
+</svg>

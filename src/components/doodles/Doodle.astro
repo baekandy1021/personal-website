@@ -1,0 +1,16 @@
+---
+// Pick a doodle by name (used by project frontmatter: `doodle: plant`).
+import Plant from './Plant.astro';
+import Cup from './Cup.astro';
+import Plane from './Plane.astro';
+import Sparkle from './Sparkle.astro';
+import Bulb from './Bulb.astro';
+import Tennis from './Tennis.astro';
+import Bird from './Bird.astro';
+import Slots from './Slots.astro';
+
+const map = { plant: Plant, cup: Cup, plane: Plane, sparkle: Sparkle, bulb: Bulb, tennis: Tennis, bird: Bird, slots: Slots } as const;
+const { name = 'sparkle', ...rest } = Astro.props as { name?: keyof typeof map; [k: string]: unknown };
+const Cmp = map[name] ?? Sparkle;
+---
+<Cmp {...rest} />

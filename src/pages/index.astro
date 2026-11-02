@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProjectItem from '../components/ProjectItem.astro';
+import About from '../components/About.astro';
+import Now from '../components/Now.astro';
+import Footer from '../components/Footer.astro';
+import Divider from '../components/Divider.astro';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order || b.data.year - a.data.year
+);
+---
+<Base>
+  <Header />
+  <main id="main">
+    <Hero />
+
+    <section id="work" class="wrap section work">
+      <div class="section-head">
+        <span class="label">01</span>
+        <h2>Selected work</h2>
+      </div>
+      <div class="list">
+        {
+          projects.map((project, i) => (
+            <>
+              {i > 0 && <Divider class="sep" />}
+              <ProjectItem project={project} index={i} />
+            </>
+          ))
+        }
+      </div>
+    </section>
+
+    <About />
+    <Now />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .work {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+  .list {
+    display: grid;
+    gap: clamp(72px, 10vw, 120px);
+  }
+</style>

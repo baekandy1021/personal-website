@@ -1,0 +1,11 @@
+---
+const { class: cls, draw = true } = Astro.props;
+---
+<svg viewBox="0 0 80 80" class:list={['doodle', { draw }, cls]} aria-hidden="true">
+  <path class="f" d="M12 44c-4-18 12-32 30-30s30 18 24 34c-6 14-50 14-54-4z" />
+  <g filter="url(#wobble)">
+    <path d="M36 10c1 14 6 20 22 22-16 2-21 8-22 24-1-16-6-22-22-24 16-2 21-8 22-22z" />
+    <path class="a" d="M62 54c0 6 2 8 8 8-6 0-8 2-8 8 0-6-2-8-8-8 6 0 8-2 8-8z" />
+    <circle cx="16" cy="62" r="2" />
+  </g>
+</svg>

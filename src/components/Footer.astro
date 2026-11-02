@@ -1,0 +1,70 @@
+---
+import { site } from '../data/site';
+import Plane from './doodles/Plane.astro';
+import Divider from './Divider.astro';
+const year = new Date().getFullYear();
+---
+<footer id="contact" class="wrap footer">
+  <div class="hello">
+    <h2>
+      Say hello{site.email && (
+        <>
+          {' '}at <a href={`mailto:${site.email}`}>{site.email}</a>
+        </>
+      )}
+    </h2>
+    <Plane class="plane" />
+  </div>
+  <p class="label links">
+    {site.github && <a href={site.github}>github</a>}
+    {site.linkedin && <a href={site.linkedin}>linkedin</a>}
+    {site.resume && <a href={site.resume}>resume</a>}
+  </p>
+  <Divider />
+  <p class="label colophon">
+    <span>© {year} {site.name}</span>
+    <span>Drawn and built by hand with Astro.</span>
+  </p>
+</footer>
+
+<style>
+  .footer {
+    padding-top: clamp(48px, 8vw, 96px);
+    padding-bottom: 32px;
+  }
+  .hello {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-size: var(--step-2);
+    max-width: 22ch;
+    overflow-wrap: anywhere;
+  }
+  h2 a {
+    font-style: italic;
+  }
+  .hello :global(.plane) {
+    width: 96px;
+    height: auto;
+    transform: translateY(-10px);
+  }
+  .links {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0 40px;
+  }
+  .links a {
+    color: var(--ink);
+  }
+  .colophon {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 14px;
+  }
+</style>

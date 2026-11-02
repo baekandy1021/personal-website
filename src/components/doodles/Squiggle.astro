@@ -1,0 +1,7 @@
+---
+// Hand-drawn underline. Stretches to the width of its parent.
+const { class: cls } = Astro.props;
+---
+<svg viewBox="0 0 200 14" preserveAspectRatio="none" class:list={['doodle', 'draw', 'squiggle', cls]} aria-hidden="true">
+  <path class="a" d="M3 9c18-6 28 4 46-1s30-6 48 0 30 4 50-2 32-3 50 1" />
+</svg>

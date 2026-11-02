@@ -1,0 +1,160 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import DemoVideo from './DemoVideo.astro';
+import Doodle from './doodles/Doodle.astro';
+import Arrow from './doodles/Arrow.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+}
+const { project, index } = Astro.props;
+const p = project.data;
+const flip = index % 2 === 1;
+const num = String(index + 1).padStart(2, '0');
+---
+<article class:list={['project', { flip }]}>
+  <div class="text">
+    <Doodle name={p.doodle} class="mark" />
+    <p class="label meta">
+      <span>{num}</span><span>{p.year}</span>{p.role && <span>{p.role}</span>}
+    </p>
+    <h3>
+      <a href={`/projects/${project.id}/`}>{p.title}</a>
+      {p.placeholder && <span class="sample-tag">sample</span>}
+    </h3>
+    <p class="blurb">{p.blurb}</p>
+    {p.stack.length > 0 && <p class="label stack">{p.stack.join(' · ')}</p>}
+    <p class="label links">
+      <a href={`/projects/${project.id}/`}>read more →</a>
+      {p.links.live && <a href={p.links.live}>live ↗</a>}
+      {p.links.github && <a href={p.links.github}>code ↗</a>}
+      {p.youtube && <a href={p.youtube}>full demo ↗</a>}
+      {p.links.report && <a href={p.links.report}>report (pdf) ↗</a>}
+    </p>
+    {
+      p.note && (
+        <p class="note aside">
+          <Arrow class="aside-arrow" />
+          {p.note}
+        </p>
+      )
+    }
+  </div>
+  <div class="media">
+    <DemoVideo
+      video={p.video}
+      poster={p.poster}
+      title={p.title}
+      doodle={p.doodle}
+      slug={project.id}
+      tilt={flip ? 0.6 : -0.5}
+      aspect={p.aspect}
+      image={p.image}
+      imageAlt={p.imageAlt}
+    />
+  </div>
+</article>
+
+<style>
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(28px, 6vw, 80px);
+    align-items: center;
+  }
+  .flip .text {
+    order: 2;
+  }
+  .text {
+    position: relative;
+  }
+  .project :global(.mark) {
+    position: absolute;
+    width: 54px;
+    height: auto;
+    top: -64px;
+    right: 6%;
+    transform: rotate(6deg);
+  }
+  .meta {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .meta span:first-child {
+    color: var(--clay-ink);
+  }
+  h3 {
+    font-size: var(--step-2);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--clay);
+    text-decoration-thickness: 2px;
+  }
+  .blurb {
+    margin-top: 14px;
+    color: var(--ink-2);
+    max-width: 42ch;
+  }
+  .stack {
+    margin-bottom: 8px;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+  }
+  .links a {
+    color: var(--ink);
+  }
+  .aside {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 18px;
+    transform: rotate(-2deg);
+    max-width: 30ch;
+    width: fit-content;
+  }
+  .project :global(.aside-arrow) {
+    flex: none;
+    width: 40px;
+    height: auto;
+    margin-top: 2px;
+  }
+  /* Arrows point toward the video: right when it's on the right, left when flipped */
+  @media (min-width: 761px) {
+    .project:not(.flip) .aside {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+    .project:not(.flip) :global(.aside-arrow) {
+      transform: scaleX(-1) rotate(-10deg);
+    }
+  }
+  @media (max-width: 760px) {
+    .project {
+      grid-template-columns: 1fr;
+    }
+    .flip .text {
+      order: 0;
+    }
+    .project :global(.mark) {
+      top: -52px;
+      width: 44px;
+    }
+    .project :global(.aside-arrow) {
+      transform: scaleX(-1) rotate(-60deg);
+      order: 2;
+    }
+  }
+</style>

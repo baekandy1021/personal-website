@@ -1,0 +1,104 @@
+---
+import { site } from '../data/site';
+import Desk from './doodles/Desk.astro';
+import Squiggle from './doodles/Squiggle.astro';
+import Arrow from './doodles/Arrow.astro';
+const { headline } = site;
+---
+<section class="wrap hero">
+  <div class="copy">
+    <h1>
+      {headline.before}{' '}
+      <span class="hl">{headline.highlight}<Squiggle class="hl-line" /></span>{headline.after}
+    </h1>
+    <p class="intro">{site.intro}</p>
+    <p class="links label">
+      {site.github && <a href={site.github}>github</a>}
+      {site.linkedin && <a href={site.linkedin}>linkedin</a>}
+      {site.resume && <a href={site.resume}>resume</a>}
+      {site.email && <a href={`mailto:${site.email}`}>email</a>}
+    </p>
+  </div>
+  <div class="art">
+    <Desk class="desk" />
+    <p class="note art-note"><Arrow class="art-arrow" />my desk, more or less</p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(24px, 5vw, 72px);
+    align-items: end;
+    padding-top: clamp(56px, 11vw, 140px);
+    padding-bottom: clamp(32px, 6vw, 72px);
+  }
+  h1 {
+    font-size: var(--step-3);
+    max-width: 14ch;
+  }
+  .hl {
+    position: relative;
+    font-style: italic;
+    white-space: nowrap;
+  }
+  .hero :global(.hl-line) {
+    position: absolute;
+    left: -2%;
+    width: 104%;
+    bottom: -0.12em;
+    height: 0.22em;
+  }
+  .intro {
+    margin-top: clamp(20px, 3vw, 32px);
+    max-width: 46ch;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-top: 24px;
+  }
+  .links a {
+    color: var(--ink);
+  }
+  .art {
+    position: relative;
+  }
+  .art :global(.desk) {
+    width: 100%;
+    height: auto;
+  }
+  .art-note {
+    position: absolute;
+    right: 2%;
+    top: -18%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transform: rotate(-3deg);
+    margin: 0;
+  }
+  .art :global(.art-arrow) {
+    width: 44px;
+    height: auto;
+    order: 2;
+    margin-left: 18px;
+    transform: rotate(-75deg);
+  }
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .art {
+      max-width: 380px;
+      justify-self: end;
+      width: 90%;
+      margin-top: 48px;
+    }
+  }
+</style>

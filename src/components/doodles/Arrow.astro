@@ -1,0 +1,10 @@
+---
+// Curvy arrow pointing left-ish. Flip it with CSS transforms.
+const { class: cls } = Astro.props;
+---
+<svg viewBox="0 0 70 40" class:list={['doodle', 'draw', 'arrow', cls]} aria-hidden="true">
+  <g filter="url(#wobble)">
+    <path class="a" d="M66 30C50 36 26 32 10 12" />
+    <path class="a" d="M8 24L9 10l13 2" />
+  </g>
+</svg>

@@ -1,0 +1,139 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import DemoVideo from '../../components/DemoVideo.astro';
+import Doodle from '../../components/doodles/Doodle.astro';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const p = project.data;
+const { Content } = await render(project);
+---
+<Base title={`${p.title} — ${site.name}`} description={p.blurb}>
+  <Header home={false} />
+  <main id="main" class="wrap page">
+    <p class="label back"><a href="/#work">← all work</a></p>
+    <header class="head">
+      <div>
+        <p class="label meta">
+          <span>{p.year}</span>{p.role && <span>{p.role}</span>}
+          {p.placeholder && <span class="sample-tag">sample</span>}
+        </p>
+        <h1>{p.title}</h1>
+        <p class="blurb">{p.blurb}</p>
+      </div>
+      <Doodle name={p.doodle} class="mark" />
+    </header>
+
+    <DemoVideo
+      video={p.video}
+      poster={p.poster}
+      title={p.title}
+      doodle={p.doodle}
+      slug={project.id}
+      aspect={p.aspect}
+      image={p.image}
+      imageAlt={p.imageAlt}
+    />
+
+    <div class="body">
+      <aside class="label facts">
+        {p.stack.length > 0 && (
+          <div>
+            <p class="k">Built with</p>
+            <p>{p.stack.join(', ')}</p>
+          </div>
+        )}
+        {(p.links.live || p.links.github || p.youtube || p.links.report || p.links.paper) && (
+          <div>
+            <p class="k">Links</p>
+            <p class="ls">
+              {p.links.live && <a href={p.links.live}>live ↗</a>}
+              {p.links.github && <a href={p.links.github}>code ↗</a>}
+              {p.youtube && <a href={p.youtube}>full demo ↗</a>}
+              {p.links.report && <a href={p.links.report}>report (pdf) ↗</a>}
+              {p.links.paper && <a href={p.links.paper}>original paper ↗</a>}
+            </p>
+          </div>
+        )}
+      </aside>
+      <article class="prose">
+        <Content />
+      </article>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .page {
+    padding-top: clamp(40px, 7vw, 88px);
+  }
+  .back a {
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin: 28px 0 clamp(32px, 5vw, 56px);
+  }
+  .meta {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: var(--step-3);
+  }
+  .blurb {
+    margin-top: 16px;
+    font-size: var(--step-1);
+    color: var(--ink-2);
+    max-width: 44ch;
+  }
+  .head :global(.mark) {
+    flex: none;
+    width: clamp(56px, 10vw, 96px);
+    height: auto;
+  }
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 8fr);
+    gap: clamp(28px, 6vw, 80px);
+    margin-top: clamp(48px, 7vw, 88px);
+  }
+  .facts {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+  }
+  .facts p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .facts .k {
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .ls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+  @media (max-width: 760px) {
+    .body {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

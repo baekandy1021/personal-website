@@ -1,0 +1,240 @@
+---
+// A looping, muted demo clip sketched inside a hand-drawn browser window.
+// It plays only while on screen and never autoplays for people who prefer reduced motion.
+import fs from 'node:fs';
+import path from 'node:path';
+import Doodle from './doodles/Doodle.astro';
+
+interface Props {
+  video?: string; // e.g. /projects/my-thing/demo.mp4
+  poster?: string;
+  title: string;
+  doodle?: string;
+  slug?: string;
+  tilt?: number;
+  aspect?: string; // "width / height"
+  image?: string;
+  imageAlt?: string;
+}
+const {
+  video,
+  poster,
+  title,
+  doodle = 'sparkle',
+  slug = 'your-project',
+  tilt = 0,
+  aspect = '16 / 10',
+  image,
+  imageAlt,
+} = Astro.props;
+const [aw, ah] = aspect.split('/').map(Number);
+const portrait = aw / ah < 1;
+
+const inPublic = (p?: string) => !!p && fs.existsSync(path.join(process.cwd(), 'public', p));
+const hasVideo = inPublic(video);
+const webm = video?.replace(/\.mp4$/i, '.webm');
+const hasWebm = hasVideo && webm !== video && inPublic(webm);
+const autoPoster = video?.replace(/[^/]+$/, 'poster.jpg');
+const posterSrc = poster ?? (inPublic(autoPoster) ? autoPoster : undefined);
+---
+<figure class:list={['demo', { portrait }]} data-demo style={`--tilt:${tilt}deg; --aspect:${aw} / ${ah}`}>
+  <div class="window">
+    <div class="bar" aria-hidden="true">
+      <svg viewBox="0 0 54 12" class="dots"><circle cx="6" cy="6" r="4.2" /><circle cx="22" cy="6" r="4.2" /><circle cx="38" cy="6" r="4.2" /></svg>
+      <svg viewBox="0 0 100 4" preserveAspectRatio="none" class="bar-line"><path d="M0 2C30 1 60 3 100 1.6" vector-effect="non-scaling-stroke" /></svg>
+    </div>
+    <div class="screen">
+      {
+        hasVideo ? (
+          <>
+            <video muted loop playsinline preload="none" poster={posterSrc} aria-label={`Demo of ${title}`}>
+              {hasWebm && <source src={webm} type="video/webm" />}
+              <source src={video} type="video/mp4" />
+            </video>
+            <button class="toggle label" type="button" aria-label={`Play demo video of ${title}`}>
+              play
+            </button>
+          </>
+        ) : image ? (
+          <img class="still" src={image} alt={imageAlt ?? `Results from ${title}`} loading="lazy" />
+        ) : (
+          <div class="empty">
+            <Doodle name={doodle} class="empty-doodle" />
+            <p class="label">
+              TODO: drop <code>demo.mp4</code> into
+              <br />
+              <code>public/projects/{slug}/</code>
+            </p>
+          </div>
+        )
+      }
+    </div>
+    <svg class="outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M.8 1.4C30 .5 70 1.6 99.3.9L99.1 99.2C70 99.7 30 98.8.9 99.4Z" vector-effect="non-scaling-stroke" />
+    </svg>
+  </div>
+</figure>
+
+<style>
+  .demo {
+    margin: 0;
+    position: relative;
+    transform: rotate(var(--tilt));
+  }
+  /* tall recordings (phones, games) get a narrow window instead of a giant one */
+  .portrait {
+    width: min(100%, 340px);
+    margin-inline: auto;
+  }
+  .window {
+    position: relative;
+    background: var(--paper);
+    border-radius: 4px;
+  }
+  /* sketchy offset "shadow" */
+  .window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translate(7px, 8px);
+    background: var(--paper-2);
+    border-radius: 4px;
+    z-index: -1;
+  }
+  .outline {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .outline path,
+  .bar-line path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+  .bar {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding-inline: 12px;
+  }
+  .dots {
+    width: 46px;
+    height: 10px;
+    overflow: visible;
+  }
+  .dots circle {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.3;
+  }
+  .dots circle:first-child {
+    fill: var(--clay);
+    stroke: var(--clay);
+  }
+  .bar-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 4px;
+    overflow: visible;
+  }
+  .screen {
+    position: relative;
+    aspect-ratio: var(--aspect, 16 / 10);
+    margin: 0 6px 6px;
+    overflow: hidden;
+    border-radius: 0 0 3px 3px;
+    background: var(--paper-2);
+  }
+  .still {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+    padding: 4px;
+  }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 99px;
+    padding: 3px 10px;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.15s;
+  }
+  .toggle:hover,
+  .toggle:focus-visible {
+    opacity: 1;
+  }
+  .empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+    padding: 16px;
+  }
+  .empty :global(.empty-doodle) {
+    width: clamp(56px, 12vw, 96px);
+    height: auto;
+  }
+  .empty code {
+    font-family: var(--mono);
+    color: var(--ink-2);
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-demo]').forEach((root) => {
+    const video = root.querySelector('video');
+    const btn = root.querySelector<HTMLButtonElement>('.toggle');
+    if (!video || !btn) return;
+    const name = video.getAttribute('aria-label') ?? 'demo';
+    let userPaused = reduce; // reduced-motion users start paused and press play themselves
+
+    const sync = () => {
+      btn.textContent = video.paused ? '▶ play' : '❚❚ pause';
+      btn.setAttribute('aria-label', `${video.paused ? 'Play' : 'Pause'} ${name.toLowerCase()}`);
+    };
+    video.addEventListener('play', sync);
+    video.addEventListener('pause', sync);
+    btn.addEventListener('click', () => {
+      if (video.paused) {
+        userPaused = false;
+        video.play().catch(() => {});
+      } else {
+        userPaused = true;
+        video.pause();
+      }
+    });
+
+    new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !userPaused) video.play().catch(() => {});
+        else if (!entry.isIntersecting) video.pause();
+      },
+      { threshold: 0.35 }
+    ).observe(video);
+    sync();
+  });
+</script>

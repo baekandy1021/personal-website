@@ -1,0 +1,95 @@
+---
+import { site } from '../data/site';
+import Divider from './Divider.astro';
+import Plant from './doodles/Plant.astro';
+---
+<section id="about" class="wrap section about">
+  <div class="section-head">
+    <span class="label">02</span>
+    <h2>About</h2>
+  </div>
+  <div class="grid">
+    <div class="bio">
+      {site.about.map((para) => <p>{para}</p>)}
+      <Plant class="plant" />
+    </div>
+    <div class="exp">
+      <p class="label">Experience</p>
+      <ol>
+        {
+          site.experience.map((e) => (
+            <li>
+              <Divider />
+              <div class="row">
+                <span class="label when">{e.when}</span>
+                <span class="what">
+                  {e.what}
+                  <span class="where">{e.where}</span>
+                </span>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <Divider />
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(32px, 7vw, 96px);
+  }
+  .bio {
+    position: relative;
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34em;
+    font-family: var(--serif);
+  }
+  .bio :global(.plant) {
+    width: 64px;
+    height: auto;
+    margin-top: 28px;
+  }
+  .exp > .label {
+    margin-bottom: 12px;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 9.5em 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    align-items: baseline;
+  }
+  .when {
+    white-space: nowrap;
+  }
+  .what {
+    display: flex;
+    flex-direction: column;
+  }
+  .where {
+    color: var(--muted);
+    font-size: 0.94em;
+  }
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 420px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+</style>
